@@ -5,7 +5,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 import dynamic from 'next/dynamic';
-import { getPyodide } from '../utils/pyodideLoader';
+import { getPyodide, PyodideInterface } from '../utils/pyodideLoader';
 import MarkdownRenderer from '../components/MarkdownRenderer';
 
 const MonacoEditor = dynamic(() => import('@monaco-editor/react'), { ssr: false });
@@ -36,16 +36,16 @@ export default function HomePage() {
 }
 
 function PythonEditorContent() {
-  const [output, setOutput] = useState('');
-  const [pyodide, setPyodide] = useState<any>(null);
-  const [packageName, setPackageName] = useState('');
+  const [output, setOutput] = useState<string>('');
+  const [pyodide, setPyodide] = useState<PyodideInterface | null>(null);
+  const [packageName, setPackageName] = useState<string>('');
   const editorRef = useRef<any>(null);
-  const [consoleHeight, setConsoleHeight] = useState(350); // Initial height for the console
-  const [isResizing, setIsResizing] = useState(false); // For vertical resizing
+  const [consoleHeight, setConsoleHeight] = useState<number>(350); // Initial height for the console
+  const [isResizing, setIsResizing] = useState<boolean>(false); // For vertical resizing
   const editorContainerRef = useRef<HTMLDivElement>(null);
   const consoleRef = useRef<HTMLDivElement>(null);
-  const initialConsoleHeight = useRef(200);
-  const initialMouseY = useRef(0);
+  const initialConsoleHeight = useRef<number>(200);
+  const initialMouseY = useRef<number>(0);
 
   const [leftWidth, setLeftWidth] = useState(40); // Initial width for the left section (in percentage)
   const [isHorizontalResizing, setIsHorizontalResizing] = useState(false); // For horizontal resizing
@@ -75,7 +75,7 @@ function PythonEditorContent() {
       if (!isResizing || !editorContainerRef.current || !consoleRef.current) return;
 
       const deltaY = initialMouseY.current - e.clientY;
-      let newConsoleHeight = initialConsoleHeight.current + deltaY;
+      const newConsoleHeight = initialConsoleHeight.current + deltaY;
 
       // Ensure console height doesn't go below a minimum or above a maximum
       const minHeight = 50;
@@ -112,7 +112,7 @@ function PythonEditorContent() {
       const containerWidth = document.documentElement.clientWidth;
       const deltaX = e.clientX - initialMouseX.current;
       const newLeftWidthPx = (initialLeftWidth.current / 100) * containerWidth + deltaX;
-      let newLeftWidth = (newLeftWidthPx / containerWidth) * 100;
+      const newLeftWidth = (newLeftWidthPx / containerWidth) * 100;
 
       // Calculate the minimum width for the right panel in pixels
       // This is an estimate; actual value might need fine-tuning based on content
@@ -176,8 +176,8 @@ function PythonEditorContent() {
       pyodide.runPython('import os; os.environ["PYTHONUNBUFFERED"] = "1"');
       await pyodide.runPythonAsync(code);
       setOutput(stdout);
-    } catch (e: any) {
-      setOutput(e.toString());
+    } catch (e: unknown) {
+      setOutput(e instanceof Error ? e.toString() : String(e));
     }
   };
 
@@ -188,8 +188,8 @@ function PythonEditorContent() {
       await pyodide.runPythonAsync(`import micropip\nawait micropip.install('${packageName}')`);
       setOutput(`Package '${packageName}' installed successfully.`);
       setPackageName('');
-    } catch (e: any) {
-      setOutput(`Error installing '${packageName}':\n` + e.toString());
+    } catch (e: unknown) {
+      setOutput(`Error installing '${packageName}':\n` + (e instanceof Error ? e.toString() : String(e)));
     }
   };
 
@@ -242,13 +242,13 @@ function PythonEditorContent() {
 
                 const data = await response.json();
                 setGeneratedQuestion(data.question);
-              } catch (error: any) {
+              } catch (error: unknown) {
                 clearTimeout(timeoutId); // Ensure timeout is cleared even on error
-                if (error.name === 'AbortError') {
+                if (error instanceof Error && error.name === 'AbortError') {
                   setGeneratedQuestion('Error: Request timed out. Please try again.');
                 } else {
                   console.error('Error generating question:', error);
-                  setGeneratedQuestion(`Error: ${error.message || 'Failed to generate question. Please try again.'}`);
+                  setGeneratedQuestion(`Error: ${error instanceof Error ? error.message : 'Failed to generate question. Please try again.'}`);
                 }
               } finally {
                 setIsLoadingQuestion(false); // End loading

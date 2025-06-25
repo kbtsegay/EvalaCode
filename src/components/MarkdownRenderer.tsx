@@ -11,10 +11,10 @@ const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({ markdown }) => {
   return (
     <ReactMarkdown
       components={{
-        h1: ({ node, ...props }) => <h1 className="text-3xl font-bold text-white mb-4" {...props} />,
-        h2: ({ node, ...props }) => <h2 className="text-2xl font-bold text-white mt-4 mb-3" {...props} />,
-        h3: ({ node, ...props }) => <h3 className="text-xl font-bold text-white mb-4" {...props} />,
-        p: ({ node, ...props }) => {
+        h1: ({ ...props }) => <h1 className="text-3xl font-bold text-white mb-4" {...props} />,
+        h2: ({ ...props }) => <h2 className="text-2xl font-bold text-white mt-4 mb-3" {...props} />,
+        h3: ({ ...props }) => <h3 className="text-xl font-bold text-white mb-4" {...props} />,
+        p: ({ ...props }) => {
           const processedChildren = React.Children.map(props.children, child => {
             if (typeof child === 'string') {
               return child.replace(/\\"/g, '"');
@@ -23,11 +23,11 @@ const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({ markdown }) => {
           });
           return <p className="text-base text-zinc-200 mb-6" {...props}>{processedChildren}</p>;
         },
-        code({ node, inline, className, children, ...props }: any) {
+        code({ inline, className, children, ...props }: { inline?: boolean; className?: string; children?: React.ReactNode }) {
           const match = /language-(\w+)/.exec(className || '');
           return !inline && match ? (
             <SyntaxHighlighter
-              style={atomDark as any}
+              style={atomDark}
               language={match[1]}
               PreTag="div"
               {...props}

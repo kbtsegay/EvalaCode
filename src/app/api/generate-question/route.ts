@@ -1,5 +1,17 @@
 import { NextResponse } from 'next/server';
 
+interface TestCase {
+  input: string | object;
+  output: string | object;
+}
+
+interface ParsedQuestion {
+  title: string;
+  description: string;
+  function_signature: string;
+  test_cases: TestCase[];
+}
+
 export async function POST(request: Request) {
   try {
     const { difficulty } = await request.json();
@@ -54,22 +66,26 @@ export async function POST(request: Request) {
     }
 
     try {
-      parsedQuestion = JSON.parse(cleanedQuestionContent);
-    } catch (parseError: any) {
+      parsedQuestion = JSON.parse(cleanedQuestionContent) as ParsedQuestion;
+    } catch (parseError: unknown) {
       console.error('Error parsing generated question JSON:', parseError);
-      return NextResponse.json({ error: 'Failed to parse generated question JSON', details: parseError.message }, { status: 500 });
+      let errorMessage = 'Unknown parsing error';
+      if (parseError instanceof Error) {
+        errorMessage = parseError.message;
+      }
+      return NextResponse.json({ error: 'Failed to parse generated question JSON', details: errorMessage }, { status: 500 });
     }
 
     const { title, description, function_signature, test_cases } = parsedQuestion;
 
     let formattedTestCases = '';
     if (test_cases && test_cases.length > 0) {
-      const isJsonLike = (val: any) => {
+      const isJsonLike = (val: string | object): val is string => {
         if (typeof val !== 'string') return false;
         return val.trim().startsWith('[') || val.trim().startsWith('{');
       };
 
-      formattedTestCases = test_cases.map((tc: any, index: number) => {
+      formattedTestCases = test_cases.map((tc: TestCase) => {
         const input = isJsonLike(tc.input) ? tc.input : JSON.stringify(tc.input);
         const output = isJsonLike(tc.output) ? tc.output : JSON.stringify(tc.output);
 
