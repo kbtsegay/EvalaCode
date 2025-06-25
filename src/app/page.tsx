@@ -7,6 +7,7 @@ import { useEffect, useRef, useState } from 'react';
 import dynamic from 'next/dynamic';
 import { getPyodide, PyodideInterface } from '../utils/pyodideLoader';
 import MarkdownRenderer from '../components/MarkdownRenderer';
+import * as monaco from 'monaco-editor';
 
 const MonacoEditor = dynamic(() => import('@monaco-editor/react'), { ssr: false });
 
@@ -39,7 +40,7 @@ function PythonEditorContent() {
   const [output, setOutput] = useState<string>('');
   const [pyodide, setPyodide] = useState<PyodideInterface | null>(null);
   const [packageName, setPackageName] = useState<string>('');
-  const editorRef = useRef<any>(null);
+  const editorRef = useRef<monaco.editor.IStandaloneCodeEditor | null>(null);
   const [consoleHeight, setConsoleHeight] = useState<number>(350); // Initial height for the console
   const [isResizing, setIsResizing] = useState<boolean>(false); // For vertical resizing
   const editorContainerRef = useRef<HTMLDivElement>(null);
@@ -164,6 +165,10 @@ function PythonEditorContent() {
   const runCode = async () => {
     if (!pyodide) return;
     const code = editorRef.current?.getValue();
+    if (code === undefined) {
+      setOutput("Error: No code found in editor.");
+      return;
+    }
     try {
       let stdout = '';
       pyodide.setStdout({ batched: (s: string) => {
@@ -308,7 +313,7 @@ def greeting(name="Coder"):
 
 # Call the function with a custom name
 greeting("EvalaCoder")`}
-            onMount={(editor) => (editorRef.current = editor)}
+            onMount={(editor: monaco.editor.IStandaloneCodeEditor) => (editorRef.current = editor)}
             theme="vs-dark"
           />
         </div>
