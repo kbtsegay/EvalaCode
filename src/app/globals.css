@@ -24,3 +24,155 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+button {
+  cursor: pointer;
+}
+
+/* Basic styling for markdown content */
+.markdown-content h1 {
+  font-size: 2.5em;
+  font-weight: 700;
+  margin-top: 1em;
+  margin-bottom: 0.5em;
+  line-height: 1.2;
+}
+
+.markdown-content h2 {
+  font-size: 2em;
+  font-weight: 600;
+  margin-top: 1em;
+  margin-bottom: 0.5em;
+  line-height: 1.3;
+}
+
+.markdown-content h3 {
+  font-size: 1.5em;
+  font-weight: 600;
+  margin-top: 1em;
+  margin-bottom: 0.5em;
+  line-height: 1.4;
+}
+
+.markdown-content h4 {
+  font-size: 1.25em;
+  font-weight: 500;
+  margin-top: 1em;
+  margin-bottom: 0.5em;
+}
+
+.markdown-content h5 {
+  font-size: 1em;
+  font-weight: 500;
+  margin-top: 1em;
+  margin-bottom: 0.5em;
+}
+
+.markdown-content h6 {
+  font-size: 0.85em;
+  font-weight: 500;
+  margin-top: 1em;
+  margin-bottom: 0.5em;
+}
+
+.markdown-content p {
+  margin-bottom: 1em;
+}
+
+.markdown-content ul {
+  list-style-type: disc;
+  margin-left: 20px;
+  margin-bottom: 1em;
+}
+
+.markdown-content ol {
+  list-style-type: decimal;
+  margin-left: 20px;
+  margin-bottom: 1em;
+}
+
+.markdown-content li {
+  margin-bottom: 0.5em;
+}
+
+.markdown-content pre {
+  background-color: #2d2d2d;
+  color: #f8f8f2; /* Light grey for text */
+  padding: 1.2em;
+  border-radius: 8px;
+  overflow-x: auto;
+  margin-bottom: 1em;
+  line-height: 1.5;
+  font-size: 0.9em;
+}
+
+.markdown-content code {
+  font-family: 'Fira Code', 'Cascadia Code', monospace;
+  background-color: rgba(128, 128, 128, 0.2); /* Subtle background for inline code */
+  color: #e06c75; /* Distinct color for inline code */
+  padding: 0.2em 0.4em;
+  border-radius: 4px;
+  font-size: 0.9em;
+}
+
+.markdown-content pre code {
+  background-color: transparent;
+  color: inherit; /* Inherit color from pre */
+  padding: 0;
+  font-size: inherit;
+}
+
+.markdown-content a {
+  color: #60a5fa; /* Tailwind blue-400 */
+  text-decoration: underline;
+}
+
+.markdown-content strong {
+  font-weight: bold;
+}
+
+.markdown-content em {
+  font-style: italic;
+}
+
+.install-package-button {
+  background-color: #C026D3; /* Deeper purple/pink */
+  color: white;
+  padding: 10px 15px;
+  border: none;
+  border-radius: 5px;
+  font-size: 16px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.install-package-button::before {
+  content: "📦"; /* Package icon Unicode character */
+  font-size: 1.2em;
+  margin-right: 5px;
+}
+
+.package-input-field {
+  padding: 10px 15px; /* Match button padding */
+  border-radius: 5px; /* Match button border-radius */
+  border: 1px solid #52525B; /* A subtle border */
+}
+
+.run-code-button {
+  background-color: #4CAF50; /* Green color */
+  color: white;
+  padding: 10px 15px;
+  border: none;
+  border-radius: 5px;
+  font-size: 16px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.run-code-button::before {
+  content: "▶"; /* Play icon Unicode character */
+  font-size: 1.2em;
+  margin-right: 5px; /* Add some space between the icon and the text */
+}
