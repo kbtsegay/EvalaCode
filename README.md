@@ -1,10 +1,10 @@
-# 🧠 EvalaCode
+# EvalaCode
 
 EvalaCode is an interactive Python coding environment that runs entirely in your browser using Pyodide. It features a built-in Leetcode-style problem generator and a seamless coding console with instant execution—no setup required.
 
 ---
 
-## 🚀 Features
+## Features
 
 - 🧩 **Problem Generator**  
   Get auto-generated Leetcode-style problems tailored by difficulty (`Easy`, `Medium`, `Hard`), complete with function signatures and test cases.
