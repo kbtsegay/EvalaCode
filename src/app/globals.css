@@ -109,7 +109,7 @@ button {
 .markdown-content code {
   font-family: 'Fira Code', 'Cascadia Code', monospace;
   background-color: rgba(128, 128, 128, 0.2); /* Subtle background for inline code */
-  color: #e06c75; /* Distinct color for inline code */
+  color: #ffffff; /* Distinct color for inline code */
   padding: 0.2em 0.4em;
   border-radius: 4px;
   font-size: 0.9em;

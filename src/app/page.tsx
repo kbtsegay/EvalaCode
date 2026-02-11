@@ -56,6 +56,10 @@ function PythonEditorContent() {
   const [difficulty, setDifficulty] = useState('Easy'); // State for selected difficulty
   const [generatedQuestion, setGeneratedQuestion] = useState('Choose a difficulty and click "Reveal Problem" when you’re ready.');
   const [isLoadingQuestion, setIsLoadingQuestion] = useState(false); // New state for loading animation
+  const [testResults, setTestResults] = useState<string>(''); // State for test results
+  const [isLoadingTests, setIsLoadingTests] = useState(false); // New state for loading tests
+  const [functionName, setFunctionName] = useState<string | null>(null);
+  const [testCases, setTestCases] = useState<TestCase[]>([]);
   // Initialize Pyodide
   useEffect(() => {
     const loadAndSetPyodide = async () => {
@@ -247,6 +251,8 @@ function PythonEditorContent() {
 
                 const data = await response.json();
                 setGeneratedQuestion(data.question);
+                setFunctionName(data.functionName);
+                setTestCases(data.testCases);
               } catch (error: unknown) {
                 clearTimeout(timeoutId); // Ensure timeout is cleared even on error
                 if (error instanceof Error && error.name === 'AbortError') {
@@ -331,9 +337,60 @@ greeting("EvalaCoder")`}
           <div className="flex items-center gap-2">
             <button
               onClick={runCode}
-              className="run-code-button bg-blue-600 hover:bg-blue-700 px-3 py-2 rounded text-white font-bold flex-shrink-0 cursor-pointer transform transition duration-300 ease-in-out hover:scale-105"
+              className="run-code-button bg-blue-600 hover:bg-blue-700 px-3 py-2 rounded text-white font-bold flex-shrink-0 cursor-pointer transform transition duration-300 ease-in-out hover:scale-105 flex items-center justify-center"
             >
-              Run Code
+              <span className="h-5 flex items-center justify-center">Run Code</span>
+            </button>
+            <button
+              onClick={async () => {
+                if (!pyodide || !functionName || testCases.length === 0) {
+                  setTestResults("Please generate a problem first.");
+                  return;
+                }
+                setIsLoadingTests(true);
+                setTestResults('Running tests...');
+                const userCode = editorRef.current?.getValue();
+
+                if (userCode === undefined) {
+                  setTestResults("Error: No code found in editor.");
+                  setIsLoadingTests(false);
+                  return;
+                }
+
+                try {
+                  const testScript = generateTestRunnerScript(functionName, testCases);
+                  
+                  let testOutput = '';
+                  pyodide.setStdout({ batched: (s: string) => {
+                    testOutput += s;
+                    if (!s.endsWith('\n')) {
+                      testOutput += '\n';
+                    }
+                  }});
+                  pyodide.runPython('import os; os.environ["PYTHONUNBUFFERED"] = "1"');
+                  await pyodide.runPythonAsync(userCode + '\n' + testScript); // Execute user code then generated test script
+                  setTestResults(testOutput);
+
+                } catch (error: unknown) {
+                  console.error('Error running tests:', error);
+                  setTestResults(`Error: ${error instanceof Error ? error.toString() : String(error)}`);
+                } finally {
+                  setIsLoadingTests(false);
+                }
+              }}
+              className="run-tests-button bg-purple-600 hover:bg-purple-700 px-3 py-2 rounded text-white font-bold flex-shrink-0 cursor-pointer transform transition duration-300 ease-in-out hover:scale-105 flex items-center justify-center"
+              disabled={isLoadingTests || !functionName}
+            >
+              {isLoadingTests ? (
+                <span className="h-5 flex items-center justify-center">
+                  <svg className="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                  </svg>
+                </span>
+              ) : (
+                <span className="h-5 flex items-center justify-center">Run Tests</span>
+              )}
             </button>
             <input
               type="text"
@@ -344,14 +401,92 @@ greeting("EvalaCoder")`}
             />
             <button
               onClick={installPackage}
-              className="install-package-button bg-purple-600 hover:bg-purple-700 px-3 py-2 rounded text-white font-bold min-w-max flex-shrink-0 cursor-pointer transform transition duration-300 ease-in-out hover:scale-105"
+              className="install-package-button bg-purple-600 hover:bg-purple-700 px-3 py-2 rounded text-white font-bold flex-shrink-0 cursor-pointer transform transition duration-300 ease-in-out hover:scale-105 flex items-center justify-center"
             >
-              Install Packages
+              <span className="h-5 flex items-center justify-center">Install Packages</span>
             </button>
           </div>
           <pre className="whitespace-pre-wrap text-sm text-green-300">{output}</pre>
+          {testResults && (
+            <div className="mt-4 p-3 bg-zinc-700 rounded-md">
+              <h3 className="text-lg font-semibold text-blue-300 mb-2">Test Results:</h3>
+              <pre className="whitespace-pre-wrap text-sm text-yellow-300">{testResults}</pre>
+            </div>
+          )}
         </div>
       </div>
     </div>
   );
 }
+
+interface TestCase {
+  arguments: any[];
+  output: string | object | number | boolean;
+}
+
+const generateTestRunnerScript = (functionName: string, testCases: TestCase[]) => {
+  // Helper to format values for Python
+  const formatValue = (val: any) => {
+    if (typeof val === 'string') {
+        // Handle boolean strings from Python LLM output
+        if (val === 'True' || val === 'False') {
+            return val;
+        }
+        // checks if string is a json-like string
+        if (val.trim().startsWith('[') || val.trim().startsWith('{')) {
+            return val;
+        }
+        return `"${val}"`;
+    }
+    if (typeof val === 'boolean') {
+        return val ? 'True' : 'False';
+    }
+    return JSON.stringify(val);
+  };
+
+  const testCasesList = testCases.map(tc => {
+    // Ensure arguments is an array, if not wrap it
+    const args = Array.isArray(tc.arguments) ? tc.arguments : [tc.arguments];
+    // Format each argument individually
+    const formattedArgs = args.map(arg => formatValue(arg)).join(', ');
+    return `{"args": [${formattedArgs}], "expected": ${formatValue(tc.output)}}`;
+  }).join(',\n    ');
+
+  return `
+import json
+
+def run_tests():
+    test_cases = [
+        ${testCasesList}
+    ]
+    
+    passed = 0
+    total = len(test_cases)
+    
+    print(f"\\nRunning {total} test cases for function '${functionName}'...\\n")
+    
+    for i, tc in enumerate(test_cases):
+        args = tc["args"]
+        expected = tc["expected"]
+        
+        try:
+            # Always unpack arguments since we structured them as a list
+            actual = ${functionName}(*args)
+                
+            if actual == expected:
+                print(f"✅ Test {i+1} Passed")
+                passed += 1
+            else:
+                print(f"❌ Test {i+1} Failed")
+                print(f"   Input:    {args}")
+                print(f"   Expected: {expected}")
+                print(f"   Got:      {actual}")
+                
+        except Exception as e:
+            print(f"❌ Test {i+1} Error: {str(e)}")
+            
+    print(f"\\nTest Result: {passed}/{total} passed")
+
+run_tests()
+`;
+};
