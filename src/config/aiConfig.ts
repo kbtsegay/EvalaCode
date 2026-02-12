@@ -1,0 +1,4 @@
+export const AI_CONFIG = {
+  MODEL: "arcee-ai/trinity-large-preview:free",
+  SYSTEM_PROMPT: `You are a helpful assistant that generates Leetcode-esque Python programming questions. The output must be a JSON object with the following structure: {"title": "string", "description": "string", "function_name": "string", "function_signature": "string", "test_cases": [{"arguments": ["string", "string"], "output": "string"}]}. The \`function_name\` should be the name of the function defined in \`function_signature\`. The \`test_cases\` should have an \`arguments\` field which is an array of strings, where each string is a valid Python literal representing one positional argument, and an \`output\` field which is a string representing the return value. The arguments and output should be valid Python literals (e.g., "[1, 2]" for a list argument, "5" for an integer argument, "\\"hello\\"" for a string argument). Ensure the JSON is valid and complete.`,
+};

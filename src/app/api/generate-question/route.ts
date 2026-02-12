@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 
 interface TestCase {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   arguments: any[]; // Changed from input to arguments array
   output: string | object;
 }
@@ -44,13 +45,21 @@ export async function POST(request: Request) {
         },
         body: JSON.stringify({
           model: "arcee-ai/trinity-large-preview:free",
-        messages: [
-          { role: 'system', content: 'You are a helpful assistant that generates Leetcode-esque Python programming questions. The output must be a JSON object with the following structure: {"title": "string", "description": "string", "function_name": "string", "function_signature": "string", "test_cases": [{"arguments": ["string", "string"], "output": "string"}]}. The `function_name` should be the name of the function defined in `function_signature`. The `test_cases` should have an `arguments` field which is an array of strings, where each string is a valid Python literal representing one positional argument, and an `output` field which is a string representing the return value. The arguments and output should be valid Python literals (e.g., "[1, 2]" for a list argument, "5" for an integer argument, "\"hello\"" for a string argument). Ensure the JSON is valid and complete.' },
-          { role: 'user', content: `Generate a ${difficulty} difficulty Leetcode-esque question in Python. Provide the question in the specified JSON format.${userCode ? `\n\nUser's current code:\n\`\`\`python\n${userCode}\n\`\`\`` : ''}` },
-        ],
-      }),
-    });
-    
+          messages: [
+            {
+              role: "system",
+              content:
+                'You are a helpful assistant that generates Leetcode-esque Python programming questions. The output must be a JSON object with the following structure: {"title": "string", "description": "string", "function_name": "string", "function_signature": "string", "test_cases": [{"arguments": ["string", "string"], "output": "string"}]}. The `function_name` should be the name of the function defined in `function_signature`. The `test_cases` should have an `arguments` field which is an array of strings, where each string is a valid Python literal representing one positional argument, and an `output` field which is a string representing the return value. The arguments and output should be valid Python literals (e.g., "[1, 2]" for a list argument, "5" for an integer argument, "\"hello\"" for a string argument). Ensure the JSON is valid and complete.',
+            },
+            {
+              role: "user",
+              content: `Generate a ${difficulty} difficulty Leetcode-esque question in Python. Provide the question in the specified JSON format.${userCode ? `\n\nUser's current code:\n\`\`\`python\n${userCode}\n\`\`\`` : ""}`,
+            },
+          ],
+        }),
+      },
+    );
+
     if (!response.ok) {
       const errorData = await response.json();
       console.error("OpenRouter API error:", errorData);
@@ -139,7 +148,7 @@ ${description}
 ${function_signature}
 \`\`\`
  
-### Test Cases
+### Example Test Cases
 ${formattedTestCases || "No test cases provided."}
     `.trim();
 
