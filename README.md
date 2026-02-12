@@ -10,11 +10,11 @@ EvalaCode is an interactive Python coding environment that runs entirely in your
 graph TD
     User[User] -->|Interacts| Frontend[Next.js Frontend]
     Frontend -->|Generates Question| API[API Route /api/generate-question]
-    API -->|Requests Prompt| LLM[OpenRouter API (LLM)]
+    API -->|Requests Prompt| LLM["OpenRouter API (LLM)"]
     LLM -->|Returns JSON| API
     API -->|Returns Question & Test Cases| Frontend
 
-    Frontend -->|Executes Code| Pyodide[Pyodide (WebAssembly)]
+    Frontend -->|Executes Code| Pyodide["Pyodide (WebAssembly)"]
     Frontend -->|Generates Test Script| TestRunner[Client-side Test Runner]
     TestRunner -->|Runs Tests| Pyodide
     Pyodide -->|Returns Results| Frontend
