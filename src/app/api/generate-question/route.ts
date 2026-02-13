@@ -157,6 +157,7 @@ ${formattedTestCases || "No test cases provided."}
         question: formattedQuestion,
         functionName: function_name,
         testCases: test_cases,
+        functionSignature: function_signature,
       },
       { status: 200 },
     );

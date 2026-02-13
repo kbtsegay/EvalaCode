@@ -46,7 +46,7 @@ export default function Console({
                 />
                 <button
                     onClick={onInstallPackage}
-                    className="p-1 hover:bg-background rounded-md text-muted-foreground hover:text-primary transition-colors"
+                    className="p-1 hover:bg-background rounded-md text-muted-foreground hover:text-primary transition-colors cursor-pointer"
                     title="Install Package"
                 >
                     <Download className="w-3.5 h-3.5" />
@@ -58,7 +58,7 @@ export default function Console({
             <button
             onClick={onRunTests}
             disabled={isLoadingTests || !hasFunctionName}
-            className={`flex items-center gap-2 px-3 py-1.5 rounded-md text-xs font-semibold transition-all group
+            className={`flex items-center gap-2 px-3 py-1.5 rounded-md text-xs font-semibold transition-all group cursor-pointer
                 ${!hasFunctionName 
                     ? 'opacity-50 cursor-not-allowed bg-secondary text-muted-foreground' 
                     : 'bg-purple-500/10 text-purple-400 hover:bg-purple-500/20 border border-purple-500/20 hover:border-purple-500/50'
@@ -76,7 +76,7 @@ export default function Console({
 
             <button
             onClick={onRunCode}
-            className="flex items-center gap-2 px-3 py-1.5 rounded-md text-xs font-semibold bg-green-500/10 text-green-400 hover:bg-green-500/20 border border-green-500/20 hover:border-green-500/50 transition-all group"
+            className="flex items-center gap-2 px-3 py-1.5 rounded-md text-xs font-semibold bg-green-500/10 text-green-400 hover:bg-green-500/20 border border-green-500/20 hover:border-green-500/50 transition-all group cursor-pointer"
             >
                 <Play className="w-3.5 h-3.5 fill-current group-hover:scale-110 transition-transform" />
                 <span>Run</span>

@@ -36,7 +36,7 @@ export default function HomePage() {
           
           <button
             onClick={() => setShowEditor(true)}
-            className="group relative inline-flex items-center justify-center px-8 py-4 font-semibold text-white transition-all duration-200 bg-primary rounded-full hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary focus:ring-offset-background overflow-hidden"
+            className="group relative inline-flex items-center justify-center px-8 py-4 font-semibold text-white transition-all duration-200 bg-primary rounded-full hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary focus:ring-offset-background overflow-hidden cursor-pointer"
           >
             <span className="absolute inset-0 w-full h-full -mt-1 rounded-lg opacity-30 bg-gradient-to-b from-transparent via-transparent to-black"></span>
             <span className="relative flex items-center gap-2 text-lg">
@@ -87,7 +87,7 @@ greeting("EvalaCoder")`);
   const initialLeftWidth = useRef(0);
 
   const [difficulty, setDifficulty] = useState('Easy'); 
-  const [generatedQuestion, setGeneratedQuestion] = useState('Choose a difficulty and click "Reveal Problem" when you’re ready.');
+  const [generatedQuestion, setGeneratedQuestion] = useState('');
   const [isLoadingQuestion, setIsLoadingQuestion] = useState(false); 
   const [functionName, setFunctionName] = useState<string | null>(null);
   const [testCases, setTestCases] = useState<TestCase[]>([]);
@@ -220,6 +220,9 @@ greeting("EvalaCoder")`);
       setGeneratedQuestion(data.question);
       setFunctionName(data.functionName);
       setTestCases(data.testCases);
+      if (data.functionSignature) {
+        setCode(`${data.functionSignature}\n    pass  # Remove this and write your code here`);
+      }
     } catch (error: unknown) {
       clearTimeout(timeoutId); 
       if (error instanceof Error && error.name === 'AbortError') {
@@ -246,7 +249,7 @@ greeting("EvalaCoder")`);
           className="flex flex-col border-r border-border/40 bg-card/30 backdrop-blur-sm" 
           style={{ width: `${leftWidth}%` }}
         >
-          <div className="flex-1 overflow-y-auto custom-scrollbar p-6">
+          <div className="flex-1 p-6 min-h-0">
             <ProblemDescription
               difficulty={difficulty}
               setDifficulty={setDifficulty}
