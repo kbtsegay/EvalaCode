@@ -1,0 +1,44 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" width="1200" height="630">
+  <!-- Background -->
+  <rect width="1200" height="630" fill="#09090b"/>
+
+  <!-- Gradient overlay (subtle radial) -->
+  <defs>
+    <radialGradient id="bgGradient" cx="50%" cy="20%">
+      <stop offset="0%" style="stop-color:#3b82f6;stop-opacity:0.1"/>
+      <stop offset="100%" style="stop-color:#09090b;stop-opacity:0"/>
+    </radialGradient>
+    <radialGradient id="bgGradient2" cx="100%" cy="80%">
+      <stop offset="0%" style="stop-color:#8b5cf6;stop-opacity:0.1"/>
+      <stop offset="100%" style="stop-color:#09090b;stop-opacity:0"/>
+    </radialGradient>
+  </defs>
+
+  <rect width="1200" height="630" fill="url(#bgGradient)"/>
+  <rect width="1200" height="630" fill="url(#bgGradient2)"/>
+
+  <!-- Main content centered -->
+  <g transform="translate(600, 315)">
+    <!-- Title -->
+    <text x="0" y="-80" font-family="system-ui, -apple-system, sans-serif" font-size="120" font-weight="700" text-anchor="middle" fill="#fafafa" letter-spacing="-2">
+      EvalaCode
+    </text>
+
+    <!-- Subtitle -->
+    <text x="0" y="20" font-family="system-ui, -apple-system, sans-serif" font-size="48" font-weight="300" text-anchor="middle" fill="#fafafa">
+      The premium in-browser Python coding environment.
+    </text>
+
+    <!-- Highlight text -->
+    <text x="0" y="80" font-family="system-ui, -apple-system, sans-serif" font-size="40" font-weight="500" text-anchor="middle" fill="#3b82f6">
+      No setup. Just code.
+    </text>
+  </g>
+
+  <!-- Decorative angle brackets in corners -->
+  <!-- Top left < -->
+  <path d="M 140 60 L 60 140 L 140 220" stroke="#3b82f6" stroke-width="4" fill="none" stroke-linecap="round" stroke-linejoin="round" opacity="0.3"/>
+
+  <!-- Bottom right > -->
+  <path d="M 1060 410 L 1140 490 L 1060 570" stroke="#3b82f6" stroke-width="4" fill="none" stroke-linecap="round" stroke-linejoin="round" opacity="0.3"/>
+</svg>

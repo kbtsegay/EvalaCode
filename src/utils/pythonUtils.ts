@@ -53,6 +53,7 @@ export const generateTestRunnerScript = (
 
   return `
 import json
+import sys
 
 def run_tests():
     test_cases = [
@@ -62,7 +63,8 @@ def run_tests():
     passed = 0
     total = len(test_cases)
     
-    print(f"\\nRunning {total} test cases for function '${functionName}'...\\n")
+    print(f"Running {total} test cases for function '${functionName}'...")
+    print("-" * 40)
     
     for i, tc in enumerate(test_cases):
         args = tc["args"]
@@ -73,18 +75,30 @@ def run_tests():
             actual = ${functionName}(*args)
                 
             if actual == expected:
-                print(f"✅ Test {i+1} Passed")
+                print(f"✅ Test {i+1}: Passed")
                 passed += 1
             else:
-                print(f"❌ Test {i+1} Failed")
+                print(f"❌ Test {i+1}: Failed")
                 print(f"   Input:    {args}")
                 print(f"   Expected: {expected}")
                 print(f"   Got:      {actual}")
                 
         except Exception as e:
             print(f"❌ Test {i+1} Error: {str(e)}")
+        
+        # Force flush to ensure UI updates immediately
+        sys.stdout.flush()
             
-    print(f"\\nTest Result: {passed}/{total} passed")
+    print("-" * 40)
+    
+    if passed == total:
+        print(f"🎉 Great job! Passed {total}/{total} tests.")
+        print("💡 You are ready for the next challenge! Click 'Reveal New Problem' to continue.")
+    else:
+        print(f"❌ Result: {passed}/{total} passed.")
+        print("💡 Check the failed cases above and debug your code.")
+    
+    sys.stdout.flush()
 
 run_tests()
 `;

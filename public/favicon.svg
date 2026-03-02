@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+  <!-- Background -->
+  <rect width="64" height="64" fill="#09090b" rx="8"/>
+
+  <!-- Left angle bracket < -->
+  <path d="M 20 14 L 4 32 L 20 50" fill="none" stroke="#3b82f6" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
+
+  <!-- Right angle bracket > -->
+  <path d="M 44 14 L 60 32 L 44 50" fill="none" stroke="#3b82f6" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>
